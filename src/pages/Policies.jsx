@@ -20,8 +20,28 @@ const Policies = () => {
     }, [userProfile]);
 
     useEffect(() => {
-        setPolicies(indianPolicies);
-        setLoading(false);
+        const fetchPolicies = async () => {
+            try {
+                // In real app, fetch from 'policies' collection
+                // For now, we will use a mix of dummy and real if available
+                const q = query(collection(db, 'policies'), orderBy('publishedAt', 'desc'));
+                const snapshot = await getDocs(q);
+
+                if (!snapshot.empty) {
+                    setPolicies(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+                } else {
+                    // Fallback to dummy
+                    setPolicies(indianPolicies);
+                }
+            } catch (err) {
+                console.error("Error loading policies", err);
+                // toast.error("Could not load policies");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPolicies();
     }, []);
 
     const toggleFollow = async (policyId) => {
