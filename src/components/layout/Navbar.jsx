@@ -18,9 +18,9 @@ const Navbar = ({ onMenuClick }) => {
                     <span className="sr-only">Open sidebar</span>
                     <Bars3Icon className="h-6 w-6" aria-hidden="true" />
                 </button>
-                {/* Logo Replacement */}
-                <div className="flex items-center gap-2">
-                    <img src={logo} alt="CollectiveVoice" className="h-10 w-auto object-contain" />
+                {/* Logo Replacement - Hidden on Desktop to avoid duplication with Sidebar */}
+                <div className="flex items-center gap-2 lg:hidden">
+                    <img src={logo} alt="CollectiveVoice" className="h-12 w-auto object-contain" />
                 </div>
             </div>
 

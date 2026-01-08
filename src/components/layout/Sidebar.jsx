@@ -34,8 +34,8 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     const SidebarContent = () => (
         <div className="flex flex-col h-full bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-r border-white/20 dark:border-gray-800/50 shadow-2xl transition-all duration-300">
-            <div className="flex items-center justify-center h-20 border-b border-gray-100/50 dark:border-gray-800/50">
-                <img src={logo} alt="CollectiveVoice" className="h-12 w-auto object-contain" />
+            <div className="flex items-center justify-center h-24 border-b border-gray-100/50 dark:border-gray-800/50">
+                <img src={logo} alt="CollectiveVoice" className="h-20 w-auto object-contain" />
             </div>
             <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto scrollbar-hide">
                 {navigation.map((item) => (

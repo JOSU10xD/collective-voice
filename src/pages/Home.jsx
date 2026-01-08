@@ -107,36 +107,71 @@ const Home = ({ filter }) => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{getTitle()}</h1>
-                    <p className="mt-1 text-gray-500">
-                        {filter === 'viswajyothi' ? 'Voice your needs for our college community.' : 'Discover and support causes around the world.'}
+            {/* Hero Section - Aura Style */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-900 via-purple-900 to-black text-white p-10 sm:p-16 shadow-2xl isolate mb-10"
+            >
+                {/* Noise Texture */}
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+
+                {/* Animated Orbs */}
+                <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary-500/30 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl mix-blend-screen animate-pulse delay-700"></div>
+
+                <div className="relative z-10 max-w-3xl">
+                    <motion.span
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm font-medium mb-6 text-primary-200"
+                    >
+                        🚀 Empowering Student Voices
+                    </motion.span>
+                    <h1 className="text-4xl sm:text-6xl font-black tracking-tight mb-6 leading-tight">
+                        Make Your Voice <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-gradient-x">Heard.</span>
+                    </h1>
+                    <p className="text-lg text-gray-300 mb-8 max-w-xl leading-relaxed">
+                        Start petitions, gain support, and drive real change on campus and beyond.
+                        Join thousands of students making a difference today.
                     </p>
+                    <div className="flex flex-wrap gap-4">
+                        <Link to="/create">
+                            <button className="px-8 py-4 bg-white text-black font-bold rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-all text-base">
+                                Start a Petition
+                            </button>
+                        </Link>
+                        <button className="px-8 py-4 bg-white/10 backdrop-blur-md text-white font-bold rounded-xl border border-white/20 hover:bg-white/20 hover:scale-105 active:scale-95 transition-all text-base">
+                            Learn More
+                        </button>
+                    </div>
                 </div>
+            </motion.div>
 
-                <Link to="/create">
-                    <Button className={filter === 'viswajyothi' ? 'bg-viswajyothi-DEFAULT hover:bg-viswajyothi-dark' : ''}>
-                        Create Petition
-                    </Button>
-                </Link>
-            </div>
-
-            {/* Sort/Filter Controls */}
-            <div className="flex items-center gap-2 mb-4">
-                <span className="text-sm font-medium text-gray-500">Sort by:</span>
-                <button
-                    onClick={() => setSortBy('recent')}
-                    className={`px-3 py-1 text-sm rounded-full transition-colors ${sortBy === 'recent' ? 'bg-primary-100 text-primary-700 font-medium' : 'text-gray-500 hover:bg-gray-100'}`}
-                >
-                    Recent
-                </button>
-                <button
-                    onClick={() => setSortBy('popular')}
-                    className={`px-3 py-1 text-sm rounded-full transition-colors ${sortBy === 'popular' ? 'bg-primary-100 text-primary-700 font-medium' : 'text-gray-500 hover:bg-gray-100'}`}
-                >
-                    Popular
-                </button>
+            {/* Sticky Filter Bar - Glassmorphism */}
+            <div className="sticky top-0 z-30 mb-8">
+                <div className="flex flex-col sm:flex-row justify-end items-center bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl p-4 rounded-2xl border border-white/20 dark:border-gray-700/50 shadow-lg ring-1 ring-black/5">
+                    <div className="flex items-center gap-2 mt-4 sm:mt-0">
+                        <div className="flex rounded-lg bg-gray-100/50 dark:bg-gray-700/50 p-1">
+                            <button
+                                onClick={() => setSortBy('recent')}
+                                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${sortBy === 'recent' ? 'bg-white dark:bg-gray-600 shadow text-primary-600 dark:text-white' : 'text-gray-500'
+                                    }`}
+                            >
+                                Recent
+                            </button>
+                            <button
+                                onClick={() => setSortBy('popular')}
+                                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${sortBy === 'popular' ? 'bg-white dark:bg-gray-600 shadow text-primary-600 dark:text-white' : 'text-gray-500'
+                                    }`}
+                            >
+                                Popular
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {loading ? (

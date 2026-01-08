@@ -32,7 +32,7 @@ const PetitionCard = ({ petition }) => {
             whileHover={{ y: -8, scale: 1.02 }}
             className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-primary-500/20 transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col h-full group relative overflow-visible"
         >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:via-purple-500/5 group-hover:to-viswajyothi-DEFAULT/5 rounded-2xl transition-all duration-500" />
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:via-purple-500/5 group-hover:to-viswajyothi-DEFAULT/5 rounded-2xl transition-all duration-500" />
             {petition.imageUrl && (
                 <div className="h-48 w-full overflow-hidden relative">
                     <motion.img
@@ -52,15 +52,15 @@ const PetitionCard = ({ petition }) => {
 
             <div className="p-5 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
-                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                    <span className="relative z-10 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
                         {petition.category || 'General'}
                     </span>
-                    <button onClick={handleShare} className="text-gray-400 hover:text-gray-600 transition-colors">
+                    <button onClick={handleShare} className="relative z-10 text-gray-400 hover:text-gray-600 transition-colors">
                         <ShareIcon className="h-5 w-5" />
                     </button>
                 </div>
 
-                <Link to={`/petition/${petition.id}`} className="block mt-1">
+                <Link to={`/petition/${petition.id}`} className="block mt-1 relative z-10">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white line-clamp-2 hover:text-primary-600 transition-colors">
                         {petition.title}
                     </h3>
