@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is the author
+    function isAuthor(resource) {
+      return resource.data.authorId == request.auth.uid;
+    }
+
+    // Petitions: Public read, Auth create, Author update (some fields)
+    match /petitions/{petitionId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        isAuthor(resource) || 
+        // Allow signature count updates by anyone signing (better to use Cloud Functions, but this is a simple rule)
+        // Ideally we restrict which fields can be updated.
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['signatureCount'])
+      );
+      allow delete: if false; // Only admins via backend or console
+      
+      // Signatures Subcollection
+      match /signatures/{userId} {
+        allow read: if true;
+        allow create, update: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
+
+    // Policies: Public read, No client writes (Admin only)
+    match /policies/{policyId} {
+      allow read: if true;
+      allow write: if false; 
+    }
+
+    // Users: Public read (for profiles), Owner write
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Notifications: Owner read/write
+    match /notifications/{notifId} {
+      allow read, write: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

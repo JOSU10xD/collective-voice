@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+    font-family: 'Outfit', sans-serif;
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-color: #f8fafc;
+  }
+
+  .dark body {
+    background-image: radial-gradient(#334155 1px, transparent 1px);
+    background-color: #0f172a;
+  }
+
+  ::selection {
+    background-color: #bae6fd;
+    /* primary-200 */
+    color: #0c4a6e;
+    /* primary-900 */
+  }
+}
+
+/* Custom scrollbar for sidebar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Glassmorphism utilities */
+.glass {
+  @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg;
+}
+
+.dark .glass {
+  @apply bg-gray-900/70 border-gray-700/30;
+}
