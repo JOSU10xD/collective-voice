@@ -29,9 +29,10 @@ const PetitionCard = ({ petition }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            whileHover={{ y: -5 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col h-full group"
+            whileHover={{ y: -8, scale: 1.02 }}
+            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-primary-500/20 transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col h-full group relative overflow-visible"
         >
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:via-purple-500/5 group-hover:to-viswajyothi-DEFAULT/5 rounded-2xl transition-all duration-500" />
             {petition.imageUrl && (
                 <div className="h-48 w-full overflow-hidden relative">
                     <motion.img

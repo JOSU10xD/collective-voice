@@ -48,12 +48,18 @@ const AuthParams = ({ type }) => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-                    {isLogin ? 'Sign in to your account' : 'Create your account'}
+                <div className="flex justify-center mb-6">
+                    <img src="/src/assets/logocv.png" alt="CollectiveVoice Logo" className="h-20 w-auto drop-shadow-2xl hover:scale-105 transition-transform duration-300" />
+                </div>
+                <h2 className="text-center text-3xl font-black tracking-tight text-gray-900 dark:text-white">
+                    {isLogin ? 'Welcome Back' : 'Join the Movement'}
                 </h2>
                 <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+                    {isLogin ? 'Sign in to your account' : 'Create your account to start making a change'}
+                </p>
+                <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
                     Or{' '}
-                    <Link to={isLogin ? "/register" : "/login"} className="font-medium text-primary-600 hover:text-primary-500">
+                    <Link to={isLogin ? "/register" : "/login"} className="font-medium text-primary-600 hover:text-primary-500 hover:underline transition-all">
                         {isLogin ? "join the community" : "sign in instead"}
                     </Link>
                 </p>

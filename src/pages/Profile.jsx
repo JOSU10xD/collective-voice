@@ -82,12 +82,12 @@ const Profile = () => {
     return (
         <div className="max-w-4xl mx-auto space-y-8">
             {/* Header Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
-                <div className="h-32 bg-gradient-to-r from-primary-600 to-indigo-600"></div>
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-3xl shadow-xl overflow-hidden border border-white/20 dark:border-gray-700">
+                <div className="h-32 bg-gradient-to-r from-primary-600 via-purple-600 to-viswajyothi-DEFAULT animate-gradient-x"></div>
                 <div className="px-8 pb-8">
                     <div className="relative flex justify-between items-end -mt-12 mb-6">
                         <div className="relative">
-                            <div className="h-24 w-24 rounded-full p-1 bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
+                            <div className="h-24 w-24 rounded-full p-1 bg-white dark:bg-gray-800 shadow-2xl ring-4 ring-white/20 dark:ring-black/20 overflow-hidden">
                                 <img
                                     src={userProfile.photoBase64 || userProfile.photoURL || `https://ui-avatars.com/api/?name=${userProfile.displayName}&background=0ea5e9&color=fff`}
                                     alt={userProfile.displayName}

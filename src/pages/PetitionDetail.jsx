@@ -132,8 +132,9 @@ const PetitionDetail = () => {
     return (
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Main Content */}
+            {/* Main Content */}
             <div className="flex-1">
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 dark:border-gray-700 overflow-hidden">
                     {petition.imageUrl && (
                         <img src={petition.imageUrl} alt={petition.title} className="w-full h-64 sm:h-80 object-cover" />
                     )}
@@ -168,7 +169,7 @@ const PetitionDetail = () => {
 
             {/* Sidebar Stats */}
             <div className="lg:w-80 space-y-6">
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 sticky top-6">
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-white/20 dark:border-gray-700 sticky top-6">
                     <div className="mb-4">
                         <div className="flex items-baseline gap-2">
                             <span className="text-3xl font-bold text-gray-900 dark:text-white">{petition.signatureCount.toLocaleString()}</span>
