@@ -37,10 +37,10 @@ service cloud.firestore {
       allow write: if false; 
     }
 
-    // Users: Public read (for profiles), Owner write
+    // Users: Public read, Owner write (Modified for AvatarUploader)
     match /users/{userId} {
       allow read: if true;
-      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
     
     // Notifications: Owner read/write

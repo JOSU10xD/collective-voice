@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import PetitionCard from '../components/petitions/PetitionCard';
+import AvatarUploader from '../components/AvatarUploader';
 import Button from '../components/ui/Button';
 
 const Profile = () => {
@@ -10,47 +11,35 @@ const Profile = () => {
     const [activeTab, setActiveTab] = useState('created');
     const [userPetitions, setUserPetitions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editForm, setEditForm] = useState({
+        displayName: '',
+        branch: '',
+        semester: '',
+        photoURL: ''
+    });
+
+    useEffect(() => {
+        if (userProfile) {
+            setEditForm({
+                displayName: userProfile.displayName || '',
+                branch: userProfile.branch || '',
+                semester: userProfile.semester || '',
+                photoURL: userProfile.photoURL || ''
+            });
+        }
+    }, [userProfile]);
 
     useEffect(() => {
         const fetchUserPetitions = async () => {
             if (!currentUser) return;
             setLoading(true);
             try {
-                // In a real app we might fetch 'signed' petitions differently 
-                // (e.g. querying a subcollection or array)
-                // For now, we only fetch 'created' ones easily.
-                // Assuming 'signed' logic would require complex querying not set up yet.
-                // We will implement 'created' fetching.
-
-                if (db._mock) {
-                    await new Promise(r => setTimeout(r, 500));
-                    // Mock user petitions
-                    if (activeTab === 'created') {
-                        setUserPetitions([
-                            {
-                                id: 'mock1',
-                                title: 'Mock Petition for demo',
-                                description: 'This is a mock petition created by you.',
-                                imageUrl: null,
-                                signatureCount: 5,
-                                goal: 100,
-                                createdAt: new Date().toISOString()
-                            }
-                        ]);
-                    } else {
-                        setUserPetitions([]);
-                    }
-                    setLoading(false);
-                    return;
-                }
-
                 let q;
                 if (activeTab === 'created') {
                     q = query(collection(db, 'petitions'), where('authorId', '==', currentUser.uid));
                 } else {
-                    // For signed, we'd ideally query where user ID is in a subcollection.
-                    // That's hard to query from top level without Collection Group queries or denormalized array.
-                    // We'll leave it empty for now or mock it.
+                    // Logic for 'signed' petitions can be added here
                     setLoading(false);
                     setUserPetitions([]);
                     return;
@@ -68,6 +57,26 @@ const Profile = () => {
         fetchUserPetitions();
     }, [currentUser, activeTab]);
 
+    const handleUpdateProfile = async (e) => {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        try {
+            const userRef = doc(db, 'users', currentUser.uid);
+            await updateDoc(userRef, {
+                displayName: editForm.displayName,
+                branch: editForm.branch,
+                semester: editForm.semester,
+                photoURL: editForm.photoURL
+            });
+            // Reload to reflect changes
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            alert("Failed to update profile");
+        }
+    };
+
     if (!userProfile) return null;
 
     return (
@@ -78,28 +87,79 @@ const Profile = () => {
                 <div className="px-8 pb-8">
                     <div className="relative flex justify-between items-end -mt-12 mb-6">
                         <div className="relative">
-                            <div className="h-24 w-24 rounded-full p-1 bg-white dark:bg-gray-800 shadow-xl">
+                            <div className="h-24 w-24 rounded-full p-1 bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
                                 <img
-                                    src={userProfile.photoURL || `https://ui-avatars.com/api/?name=${userProfile.displayName}&background=0ea5e9&color=fff`}
+                                    src={userProfile.photoBase64 || userProfile.photoURL || `https://ui-avatars.com/api/?name=${userProfile.displayName}&background=0ea5e9&color=fff`}
                                     alt={userProfile.displayName}
-                                    className="h-full w-full rounded-full object-cover"
+                                    className="h-full w-full object-cover"
                                 />
                             </div>
                         </div>
-                        <Button variant="outline" onClick={logout} className="mb-2 text-red-600 border-red-200 hover:bg-red-50">
-                            Sign Out
-                        </Button>
-                    </div>
-
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{userProfile.displayName}</h1>
-                        <p className="text-gray-500">{userProfile.email}</p>
-                        <div className="flex gap-2 mt-3">
-                            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
-                                {userProfile.role || 'Member'}
-                            </span>
+                        <div className="flex gap-2 mb-2">
+                            <Button variant="secondary" size="sm" onClick={() => setIsEditing(!isEditing)}>
+                                {isEditing ? 'Cancel' : 'Edit Profile'}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={logout} className="text-red-600 border-red-200 hover:bg-red-50">
+                                Sign Out
+                            </Button>
                         </div>
                     </div>
+
+                    {isEditing ? (
+                        <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-md animate-in fade-in slide-in-from-top-4 duration-300">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                                <input
+                                    type="text"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2 border"
+                                    value={editForm.displayName}
+                                    onChange={e => setEditForm({ ...editForm, displayName: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Profile Photo</label>
+                                <AvatarUploader />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Branch</label>
+                                    <input
+                                        type="text"
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2 border"
+                                        value={editForm.branch}
+                                        onChange={e => setEditForm({ ...editForm, branch: e.target.value })}
+                                        placeholder="CSE"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Semester</label>
+                                    <input
+                                        type="text"
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2 border"
+                                        value={editForm.semester}
+                                        onChange={e => setEditForm({ ...editForm, semester: e.target.value })}
+                                        placeholder="S6"
+                                    />
+                                </div>
+                            </div>
+                            <Button type="submit">Save Changes</Button>
+                        </form>
+                    ) : (
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{userProfile.displayName}</h1>
+                            <p className="text-gray-500">{userProfile.email}</p>
+                            <div className="flex gap-2 mt-3 items-center">
+                                <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                    {userProfile.role || 'Member'}
+                                </span>
+                                {(userProfile.branch || userProfile.semester) && (
+                                    <span className="text-sm text-gray-500 border-l pl-2 ml-1 border-gray-300">
+                                        {[userProfile.branch, userProfile.semester].filter(Boolean).join(' • ')}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 

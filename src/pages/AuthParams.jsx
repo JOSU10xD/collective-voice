@@ -16,6 +16,7 @@ const AuthParams = ({ type }) => {
         password: '',
         name: ''
     });
+    const [photoFile, setPhotoFile] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,7 +25,7 @@ const AuthParams = ({ type }) => {
             if (isLogin) {
                 await login(formData.email, formData.password);
             } else {
-                await signup(formData.email, formData.password, formData.name);
+                await signup(formData.email, formData.password, formData.name, photoFile);
             }
             toast.success(isLogin ? "Welcome back!" : "Account created successfully!");
             navigate('/');
@@ -62,13 +63,29 @@ const AuthParams = ({ type }) => {
                 <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {!isLogin && (
-                            <Input
-                                label="Full Name"
-                                type="text"
-                                required
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            />
+                            <>
+                                <Input
+                                    label="Full Name"
+                                    type="text"
+                                    required
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Photo</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="mt-1 block w-full text-sm text-gray-500
+                                            file:mr-4 file:py-2 file:px-4
+                                            file:rounded-full file:border-0
+                                            file:text-sm file:font-semibold
+                                            file:bg-primary-50 file:text-primary-700
+                                            hover:file:bg-primary-100"
+                                        onChange={(e) => setPhotoFile(e.target.files[0])}
+                                    />
+                                </div>
+                            </>
                         )}
 
                         <Input

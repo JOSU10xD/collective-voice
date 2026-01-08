@@ -23,37 +23,6 @@ const Policies = () => {
             try {
                 // In real app, fetch from 'policies' collection
                 // For now, we will use a mix of dummy and real if available
-                if (db._mock) {
-                    setPolicies([
-                        {
-                            id: 'pol1',
-                            title: 'National Education Framework 2025',
-                            summary: 'A comprehensive overhaul of the higher education system emphasizing interdisciplinary studies and flexible curriculums.',
-                            source: 'Ministry of Education',
-                            publishedAt: new Date().toISOString(),
-                            category: 'Education'
-                        },
-                        {
-                            id: 'pol2',
-                            title: 'Green Energy Subsidy Program',
-                            summary: 'New grants available for institutions adopting solar power solutions. Applications open till March.',
-                            source: 'Dept of Energy',
-                            publishedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-                            category: 'Environment'
-                        },
-                        {
-                            id: 'pol3',
-                            title: 'Digital Privacy Act Amendment',
-                            summary: 'Stricter regulations on data collection by private entities inside educational campuses.',
-                            source: 'Parliament IT Committee',
-                            publishedAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-                            category: 'Technology'
-                        }
-                    ]);
-                    setLoading(false);
-                    return;
-                }
-
                 const q = query(collection(db, 'policies'), orderBy('publishedAt', 'desc'));
                 const snapshot = await getDocs(q);
 
@@ -106,17 +75,6 @@ const Policies = () => {
         }
 
         const isFollowing = following.includes(policyId);
-        if (db._mock) {
-            if (isFollowing) {
-                setFollowing(prev => prev.filter(id => id !== policyId));
-                toast.success("Unfollowed policy (Mack)");
-            } else {
-                setFollowing(prev => [...prev, policyId]);
-                toast.success("Following policy (Mock)");
-            }
-            return;
-        }
-
         const userRef = doc(db, 'users', currentUser.uid);
 
         try {

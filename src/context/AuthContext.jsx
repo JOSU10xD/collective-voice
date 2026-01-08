@@ -7,8 +7,9 @@ import {
     onAuthStateChanged,
     updateProfile
 } from "firebase/auth";
-import { auth, db, googleProvider } from "../lib/firebase";
+import { auth, db, googleProvider, storage } from "../lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const AuthContext = createContext();
 
@@ -65,22 +66,41 @@ export function AuthProvider({ children }) {
         }
     };
 
-    function signup(email, password, name) {
-        // Mock fallback
-        if (db._mock) {
-            return new Promise(resolve => {
-                const mockUser = { uid: 'mock-uid', email, displayName: name, photoURL: null };
-                setCurrentUser(mockUser);
-                syncUserToFirestore(mockUser);
-                localStorage.setItem('mockUser', JSON.stringify(mockUser));
-                resolve({ user: mockUser });
-            });
+    // Changing function signature
+    async function signup(email, password, name, photoFile = null) {
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        let photoURL = null;
+
+        if (photoFile) {
+            try {
+                const storageRef = ref(storage, `profiles/${result.user.uid}`);
+                const snapshot = await uploadBytes(storageRef, photoFile);
+                photoURL = await getDownloadURL(snapshot.ref);
+            } catch (err) {
+                console.error("Error uploading profile photo:", err);
+            }
         }
-        return createUserWithEmailAndPassword(auth, email, password).then(async (result) => {
-            await updateProfile(result.user, { displayName: name });
-            await syncUserToFirestore({ ...result.user, displayName: name });
-            return result;
+
+        await updateProfile(result.user, {
+            displayName: name,
+            photoURL: photoURL
         });
+
+        // Sync triggers automatically via onAuthStateChanged, but explicit sync ensures faster UI update?
+        // onAuthStateChanged will fire, but we might want to ensure Firestore has the FULL data including photoURL immediately.
+        // syncUserToFirestore uses 'user' object. We should pass the updated details.
+        // Actually onAuthStateChanged might grab the user object *before* updateProfile completes if we are not careful?
+        // No, result.user is the object. updateProfile updates it on backend. locally we need to reload or manually object.
+
+        await syncUserToFirestore({
+            ...result.user,
+            displayName: name,
+            photoURL: photoURL,
+            uid: result.user.uid,
+            email: result.user.email
+        });
+
+        return result;
     }
 
     function login(email, password) {

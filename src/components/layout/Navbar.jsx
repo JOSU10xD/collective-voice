@@ -7,11 +7,11 @@ const Navbar = ({ onMenuClick }) => {
     const { currentUser, userProfile } = useAuth();
 
     return (
-        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 lg:hidden justify-between px-4 sm:px-6">
+        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 justify-between px-4 sm:px-6">
             <div className="flex items-center">
                 <button
                     type="button"
-                    className="-ml-2 mr-2 p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                    className="lg:hidden -ml-2 mr-2 p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
                     onClick={onMenuClick}
                 >
                     <span className="sr-only">Open sidebar</span>

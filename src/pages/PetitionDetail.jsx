@@ -21,28 +21,6 @@ const PetitionDetail = () => {
     useEffect(() => {
         const fetchPetition = async () => {
             try {
-                if (db._mock) {
-                    // Mock data
-                    await new Promise(r => setTimeout(r, 500));
-                    setPetition({
-                        id: id,
-                        title: 'Install Solar Panels on Campus Roofs',
-                        description: 'We simply simply must transition to renewable energy. Our campus has massive roof space being unused. This petition asks the administration to install solar panels by 2026.',
-                        imageUrl: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=80',
-                        signatureCount: 450,
-                        goal: 1000,
-                        category: 'Sustainability',
-                        visibility: 'viswajyothi',
-                        authorName: 'Jane Doe',
-                        target: 'Principal',
-                    });
-                    setSignatures([
-                        { displayName: 'Alice' }, { displayName: 'Bob' }
-                    ]);
-                    setLoading(false);
-                    return;
-                }
-
                 const docRef = doc(db, 'petitions', id);
                 const docSnap = await getDoc(docRef);
 
@@ -121,7 +99,6 @@ const PetitionDetail = () => {
     };
 
     const linkToSignature = async (ref) => {
-        if (db._mock) return;
         // Helper to create signature doc
         await import('firebase/firestore').then(fs => {
             fs.setDoc(ref, {

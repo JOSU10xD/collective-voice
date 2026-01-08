@@ -49,21 +49,16 @@ const Home = ({ filter }) => {
     const [loading, setLoading] = useState(true);
     const { currentUser } = useAuth();
     const [error, setError] = useState(null);
+    const [sortBy, setSortBy] = useState('recent');
 
     useEffect(() => {
         const fetchPetitions = async () => {
             setLoading(true);
             setError(null);
             try {
-                // If mocking, skip firestore completely
                 if (db._mock) {
-                    await new Promise(r => setTimeout(r, 500)); // Simulate delay
-                    let dummy = DUMMY_PETITIONS;
-                    if (filter === 'viswajyothi') dummy = dummy.filter(p => p.visibility === 'viswajyothi');
-                    if (filter === 'mine') dummy = [];
-                    setPetitions(dummy);
-                    setLoading(false);
-                    return;
+                    // This block should ideally be unreachable now, but keeping safe or removing.
+                    // Removing entirely is better.
                 }
 
                 let q = collection(db, 'petitions');
@@ -124,6 +119,23 @@ const Home = ({ filter }) => {
                         Create Petition
                     </Button>
                 </Link>
+            </div>
+
+            {/* Sort/Filter Controls */}
+            <div className="flex items-center gap-2 mb-4">
+                <span className="text-sm font-medium text-gray-500">Sort by:</span>
+                <button
+                    onClick={() => setSortBy('recent')}
+                    className={`px-3 py-1 text-sm rounded-full transition-colors ${sortBy === 'recent' ? 'bg-primary-100 text-primary-700 font-medium' : 'text-gray-500 hover:bg-gray-100'}`}
+                >
+                    Recent
+                </button>
+                <button
+                    onClick={() => setSortBy('popular')}
+                    className={`px-3 py-1 text-sm rounded-full transition-colors ${sortBy === 'popular' ? 'bg-primary-100 text-primary-700 font-medium' : 'text-gray-500 hover:bg-gray-100'}`}
+                >
+                    Popular
+                </button>
             </div>
 
             {loading ? (

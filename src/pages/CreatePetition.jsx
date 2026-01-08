@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { compressImage } from '../utils/imageUtils';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import toast from 'react-hot-toast';
@@ -39,20 +39,10 @@ const CreatePetition = () => {
         setLoading(true);
 
         try {
-            if (db._mock) {
-                // Mock creation
-                await new Promise(r => setTimeout(r, 1000));
-                console.log("Mock petition created:", formData);
-                toast.success("[MOCK] Petition created successfully!");
-                navigate('/');
-                return;
-            }
-
             let imageUrl = null;
             if (imageFile) {
-                const storageRef = ref(storage, `petitions/${Date.now()}_${imageFile.name}`);
-                const snapshot = await uploadBytes(storageRef, imageFile);
-                imageUrl = await getDownloadURL(snapshot.ref);
+                // Bypass CORS/Storage by using Base64 in Firestore (max ~700KB)
+                imageUrl = await compressImage(imageFile, 800, 0.8);
             }
 
             const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(t => t);
