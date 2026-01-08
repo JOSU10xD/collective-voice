@@ -13,6 +13,8 @@ const Policies = () => {
     const { currentUser, userProfile } = useAuth();
     const [following, setFollowing] = useState([]);
 
+    const [selectedCategory, setSelectedCategory] = useState("All");
+
     useEffect(() => {
         if (userProfile?.followedPolicies) {
             setFollowing(userProfile.followedPolicies);
@@ -73,20 +75,46 @@ const Policies = () => {
         }
     };
 
+    const categories = ["All", ...new Set(policies.map(p => p.category).filter(Boolean))].sort((a, b) => {
+        if (a === "All") return -1;
+        if (b === "All") return 1;
+        return a.localeCompare(b);
+    });
+
+    const filteredPolicies = selectedCategory === "All"
+        ? policies
+        : policies.filter(p => p.category === selectedCategory);
+
     if (loading) return <div className="p-10 text-center">Loading policies...</div>;
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                    <NewspaperIcon className="h-8 w-8 text-primary-600" />
+                    <NewspaperIcon className="h-8 w-8 text-blue-600" />
                     Government Policies
                 </h1>
             </div>
 
+            {/* Category Filter */}
+            <div className="flex flex-wrap gap-2">
+                {categories.map(category => (
+                    <button
+                        key={category}
+                        onClick={() => setSelectedCategory(category)}
+                        className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === category
+                            ? 'bg-blue-600 text-white shadow-md transform scale-105'
+                            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                            }`}
+                    >
+                        {category}
+                    </button>
+                ))}
+            </div>
+
             <div className="grid gap-6">
-                {policies.map(policy => (
-                    <div key={policy.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 transition-all hover:shadow-md">
+                {filteredPolicies.map(policy => (
+                    <div key={policy.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 transition-all hover:shadow-md animate-in fade-in slide-in-from-bottom-3">
                         <div className="flex justify-between items-start">
                             <div>
                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mb-2`}>
