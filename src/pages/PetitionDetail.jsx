@@ -110,6 +110,20 @@ const PetitionDetail = () => {
         });
     }
 
+    const handleShare = () => {
+        const url = window.location.href;
+        if (navigator.share) {
+            navigator.share({
+                title: petition.title,
+                text: petition.description,
+                url: url,
+            }).catch(console.error);
+        } else {
+            navigator.clipboard.writeText(url);
+            toast.success('Link copied to clipboard');
+        }
+    };
+
     if (loading) return <div className="p-10 text-center">Loading...</div>;
     if (!petition) return <div className="p-10 text-center">Petition not found.</div>;
 
@@ -182,7 +196,7 @@ const PetitionDetail = () => {
                     )}
 
                     <div className="grid grid-cols-2 gap-3">
-                        <Button variant="secondary" size="sm" className="w-full justify-center">
+                        <Button variant="secondary" size="sm" className="w-full justify-center" onClick={handleShare}>
                             <ShareIcon className="h-4 w-4 mr-2" /> Share
                         </Button>
                         <Button variant="secondary" size="sm" className="w-full justify-center text-red-600 hover:bg-red-50">
