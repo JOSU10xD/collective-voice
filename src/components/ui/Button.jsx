@@ -11,14 +11,15 @@ const Button = ({
     disabled,
     ...props
 }) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed';
 
     const variants = {
-        primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-        secondary: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-primary-500',
-        danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-        ghost: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
-        viswajyothi: 'bg-viswajyothi-DEFAULT text-white hover:bg-viswajyothi-dark focus:ring-viswajyothi-DEFAULT'
+        primary: 'bg-gradient-to-r from-cyan-500 to-primary-500 text-white hover:from-cyan-400 hover:to-primary-400 shadow-lg hover:shadow-xl glow-cyan-hover',
+        secondary: 'bg-navy-800 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/60 hover:bg-navy-700 hover:text-cyan-200',
+        outline: 'bg-transparent text-gray-300 border border-cyan-500/30 hover:border-cyan-400/60 hover:bg-cyan-500/10 hover:text-cyan-300',
+        danger: 'bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-400 shadow-lg hover:shadow-red-500/50',
+        ghost: 'text-gray-400 hover:bg-cyan-500/10 hover:text-cyan-300',
+        viswajyothi: 'bg-gradient-to-r from-viswajyothi-DEFAULT to-viswajyothi-light text-navy-900 hover:from-viswajyothi-light hover:to-viswajyothi-DEFAULT shadow-lg font-bold'
     };
 
     const sizes = {

@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti';
 import { UserCircleIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { ShareIcon, FlagIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import DiscussionBoard from '../components/discussion/DiscussionBoard';
 
 const PetitionDetail = () => {
     const { id } = useParams();
@@ -165,6 +166,9 @@ const PetitionDetail = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Discussion Section */}
+                <DiscussionBoard petitionId={petition.id} />
             </div>
 
             {/* Sidebar Stats */}

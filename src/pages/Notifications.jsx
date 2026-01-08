@@ -1,36 +1,81 @@
-import React, { useState } from 'react';
-import { BellIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from 'react';
+import { BellIcon, CheckCircleIcon, ExclamationCircleIcon, HeartIcon, ChatBubbleLeftIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
-
-const DUMMY_NOTIFS = [
-    {
-        id: 1,
-        type: 'success',
-        title: 'Petition Goal Reached!',
-        message: 'The "Install Solar Panels" petition has reached 500 signatures.',
-        time: '2 hours ago',
-        link: '/petition/1'
-    },
-    {
-        id: 2,
-        type: 'info',
-        title: 'New Policy Update',
-        message: 'The Ministry has released a new draft on Campus Safety. Check it out.',
-        time: '1 day ago',
-        link: '/policies'
-    },
-    {
-        id: 3,
-        type: 'alert',
-        title: 'Action Required',
-        message: 'Your profile is missing a bio. Add one to gain more trust.',
-        time: '2 days ago',
-        link: '/profile'
-    }
-];
+import { collection, query, where, orderBy, onSnapshot, deleteDoc, doc, writeBatch } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { useAuth } from '../context/AuthContext';
+import { formatDistanceToNow } from 'date-fns';
+import toast from 'react-hot-toast';
 
 const Notifications = () => {
-    const [notifications, setNotifications] = useState(DUMMY_NOTIFS);
+    const { currentUser } = useAuth();
+    const [notifications, setNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!currentUser) return;
+
+        const q = query(
+            collection(db, 'notifications'),
+            where('userId', '==', currentUser.uid),
+            orderBy('createdAt', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            setNotifications(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setLoading(false);
+        }, (err) => {
+            console.error("Error fetching notifications:", err);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [currentUser]);
+
+    const handleClearAll = async () => {
+        if (!notifications.length) return;
+        if (!window.confirm("Clear all notifications?")) return;
+
+        const batch = writeBatch(db);
+        notifications.forEach(n => {
+            batch.delete(doc(db, 'notifications', n.id));
+        });
+
+        try {
+            await batch.commit();
+            toast.success("Notifications cleared");
+        } catch (error) {
+            console.error("Error clearing notifications:", error);
+            toast.error("Failed to clear");
+        }
+    };
+
+    const handleDismiss = async (e, id) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            await deleteDoc(doc(db, 'notifications', id));
+        } catch (error) {
+            console.error("Error deleting notification:", error);
+        }
+    }
+
+    const getIcon = (type) => {
+        switch (type) {
+            case 'like': return <HeartIcon className="h-6 w-6 text-pink-500" />;
+            case 'reply': return <ChatBubbleLeftIcon className="h-6 w-6 text-blue-500" />;
+            case 'success': return <CheckCircleIcon className="h-6 w-6 text-green-500" />;
+            case 'alert': return <ExclamationCircleIcon className="h-6 w-6 text-red-500" />;
+            default: return <BellIcon className="h-6 w-6 text-cyan-500" />;
+        }
+    };
+
+    const getLink = (notif) => {
+        if (notif.petitionId) return `/petition/${notif.petitionId}`;
+        return notif.link || '#';
+    };
+
+    if (loading) return <div className="p-10 text-center text-gray-500">Loading notifications...</div>;
 
     return (
         <div className="max-w-3xl mx-auto">
@@ -39,12 +84,15 @@ const Notifications = () => {
                     <BellIcon className="h-8 w-8 text-primary-600" />
                     Notifications
                 </h1>
-                <button
-                    onClick={() => setNotifications([])}
-                    className="text-sm text-gray-500 hover:text-primary-600"
-                >
-                    Mark all as read
-                </button>
+                {notifications.length > 0 && (
+                    <button
+                        onClick={handleClearAll}
+                        className="text-sm text-gray-500 hover:text-red-500 flex items-center gap-1"
+                    >
+                        <TrashIcon className="h-4 w-4" />
+                        Clear all
+                    </button>
+                )}
             </div>
 
             {notifications.length === 0 ? (
@@ -56,24 +104,34 @@ const Notifications = () => {
                 <div className="space-y-4">
                     {notifications.map(notif => (
                         <Link
-                            to={notif.link}
+                            to={getLink(notif)}
                             key={notif.id}
-                            className="block bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow"
+                            className="block bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow relative group"
                         >
                             <div className="flex gap-4">
-                                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
-                                    ${notif.type === 'success' ? 'bg-green-100 text-green-600' :
-                                        notif.type === 'alert' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}>
-                                    {notif.type === 'success' ? <CheckCircleIcon className="h-6 w-6" /> :
-                                        notif.type === 'alert' ? <ExclamationCircleIcon className="h-6 w-6" /> :
-                                            <BellIcon className="h-6 w-6" />}
+                                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 dark:bg-gray-700`}>
+                                    {getIcon(notif.type)}
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">{notif.title}</h4>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{notif.message}</p>
-                                    <span className="text-xs text-gray-400 mt-2 block">{notif.time}</span>
+                                <div className="flex-1 pr-8">
+                                    <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                                        {notif.type === 'like' ? `${notif.senderName} liked your comment` :
+                                            notif.type === 'reply' ? `${notif.senderName} replied to you` :
+                                                notif.title}
+                                    </h4>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                                        {notif.text || notif.message}
+                                    </p>
+                                    <span className="text-xs text-gray-400 mt-2 block">
+                                        {notif.createdAt?.seconds ? formatDistanceToNow(new Date(notif.createdAt.seconds * 1000), { addSuffix: true }) : 'Just now'}
+                                    </span>
                                 </div>
-                                <div className="w-2 h-2 bg-primary-500 rounded-full mt-2"></div>
+                                <button
+                                    onClick={(e) => handleDismiss(e, notif.id)}
+                                    className="absolute top-4 right-4 text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    title="Dismiss"
+                                >
+                                    <TrashIcon className="h-4 w-4" />
+                                </button>
                             </div>
                         </Link>
                     ))}

@@ -5,6 +5,8 @@ import { db } from '../lib/firebase';
 import PetitionCard from '../components/petitions/PetitionCard';
 import AvatarUploader from '../components/AvatarUploader';
 import Button from '../components/ui/Button';
+import { indianPolicies } from '../data/indianPolicies';
+import { NewspaperIcon } from '@heroicons/react/24/solid';
 
 const Profile = () => {
     const { userProfile, logout, currentUser } = useAuth();
@@ -175,17 +177,59 @@ const Profile = () => {
                     >
                         Created Petitions
                     </button>
-                    {/* <button
-                        onClick={() => setActiveTab('signed')}
-                        className={`pb-4 px-6 font-medium text-sm transition-colors relative ${
-                            activeTab === 'signed' 
-                            ? 'text-primary-600 border-b-2 border-primary-600' 
-                            : 'text-gray-500 hover:text-gray-700'
-                        }`}
+                    {/* Starred Policies Tab */}
+                    <button
+                        onClick={() => setActiveTab('policies')}
+                        className={`pb-4 px-6 font-medium text-sm transition-colors relative ${activeTab === 'policies'
+                            ? 'text-cyan-400 border-b-2 border-cyan-400'
+                            : 'text-gray-500 hover:text-cyan-300'
+                            }`}
                     >
-                        Signed Petitions
-                    </button> */}
+                        Starred Policies
+                    </button>
                 </div>
+
+                {activeTab === 'policies' ? (
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {userProfile.followedPolicies && userProfile.followedPolicies.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {indianPolicies
+                                    .filter(p => userProfile.followedPolicies.includes(p.id))
+                                    .map(policy => (
+                                        <div key={policy.id} className="card-glow rounded-2xl border border-cyan-500/20 hover:border-cyan-400/40 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 group bg-navy-900/40">
+                                            <div className="flex justify-between items-start mb-4">
+                                                <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-400 ring-1 ring-inset ring-cyan-500/30">
+                                                    {policy.category}
+                                                </span>
+                                                <NewspaperIcon className="h-5 w-5 text-gray-500 group-hover:text-cyan-400 transition-colors" />
+                                            </div>
+                                            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors line-clamp-1">
+                                                {policy.title}
+                                            </h3>
+                                            <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+                                                {policy.summary}
+                                            </p>
+                                            <div className="flex items-center justify-between text-xs text-gray-500 border-t border-cyan-500/10 pt-4">
+                                                <span className="font-medium text-gray-400">{policy.source}</span>
+                                                <span>{new Date(policy.publishedAt).toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-20 bg-navy-800/40 rounded-2xl border border-cyan-500/10 border-dashed">
+                                <div className="mx-auto w-16 h-16 bg-navy-800 rounded-full flex items-center justify-center mb-4 ring-1 ring-cyan-500/20">
+                                    <NewspaperIcon className="h-8 w-8 text-gray-600" />
+                                </div>
+                                <h3 className="text-lg font-medium text-white mb-1">No starred policies</h3>
+                                <p className="text-gray-400 mb-6">Follow policies to get updates on government decisions.</p>
+                                <Button onClick={() => window.location.href = '/policies'} variant="outline" className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
+                                    Browse Policies
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                ) : (null)}
 
                 {loading ? (
                     <div className="text-center py-10">Loading...</div>

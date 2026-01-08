@@ -8,7 +8,7 @@ import {
     updateProfile
 } from "firebase/auth";
 import { auth, db, googleProvider, storage } from "../lib/firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const AuthContext = createContext();
@@ -139,7 +139,10 @@ export function AuthProvider({ children }) {
         return signOut(auth);
     }
 
+    // Listen to user profile in Firestore
     useEffect(() => {
+        let unsubscribeProfile = null;
+
         // If mocked, we simulate a guest or logged-out state initially
         if (db._mock) {
             console.log("Running in Mock Auth Mode");
@@ -147,23 +150,60 @@ export function AuthProvider({ children }) {
             if (stored) {
                 const user = JSON.parse(stored);
                 setCurrentUser(user);
-                syncUserToFirestore(user);
+                // Mock profile setting
+                setUserProfile({
+                    displayName: user.displayName || "Demo User",
+                    email: user.email || "demo@example.com",
+                    photoURL: user.photoURL,
+                    role: "user",
+                    followedPolicies: []
+                });
             }
             setLoading(false);
             return;
         }
 
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
             setCurrentUser(user);
+
+            // Clean up previous profile listener if user changes or logs out
+            if (unsubscribeProfile) {
+                unsubscribeProfile();
+                unsubscribeProfile = null;
+            }
+
             if (user) {
-                await syncUserToFirestore(user);
+                const userRef = doc(db, "users", user.uid);
+
+                unsubscribeProfile = onSnapshot(userRef, async (docSnap) => {
+                    if (docSnap.exists()) {
+                        setUserProfile(docSnap.data());
+                    } else {
+                        // Create profile if keys missing
+                        const newProfile = {
+                            displayName: user.displayName || "Anonymous",
+                            email: user.email,
+                            photoURL: user.photoURL,
+                            role: "user",
+                            createdAt: new Date().toISOString(),
+                            followedPolicies: []
+                        };
+                        await setDoc(userRef, newProfile);
+                        setUserProfile(newProfile);
+                    }
+                }, (error) => {
+                    console.error("Profile sync error:", error);
+                });
             } else {
                 setUserProfile(null);
             }
             setLoading(false);
         });
 
-        return unsubscribe;
+        return () => {
+            unsubscribeAuth();
+            if (unsubscribeProfile) unsubscribeProfile();
+        };
     }, []);
 
     const value = {

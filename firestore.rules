@@ -22,12 +22,21 @@ service cloud.firestore {
         // Ideally we restrict which fields can be updated.
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['signatureCount'])
       );
-      allow delete: if false; // Only admins via backend or console
+      allow delete: if isAuthenticated() && isAuthor(resource);
       
+
       // Signatures Subcollection
       match /signatures/{userId} {
         allow read: if true;
         allow create, update: if isAuthenticated() && request.auth.uid == userId;
+      }
+
+      // Comments Subcollection
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isAuthenticated();
+        allow update: if isAuthenticated(); // Simplified for likes/replies
+        allow delete: if isAuthenticated() && isAuthor(resource);
       }
     }
 
@@ -44,8 +53,11 @@ service cloud.firestore {
     }
     
     // Notifications: Owner read/write
+    // Notifications: Owner read/delete, Auth create (to notify others)
     match /notifications/{notifId} {
-      allow read, write: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated(); // Anyone can send a notification
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid; // Dismissal
     }
   }
 }
