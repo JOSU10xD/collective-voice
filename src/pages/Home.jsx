@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import PetitionCard from '../components/petitions/PetitionCard';
 import Button from '../components/ui/Button';
 import { Link } from 'react-router-dom';
+import { indianPolicies } from '../data/indianPolicies';
 import { PlusIcon } from '@heroicons/react/24/outline'; // Correct import? No, PlusIcon is generic.
 
 const DUMMY_PETITIONS = [
@@ -181,6 +182,42 @@ const Home = ({ filter }) => {
                     )}
                 </>
             )}
+
+
+            {/* Recent Policies Section */}
+            <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Recent Government Policies</h2>
+                        <p className="text-gray-500 mt-1">Stay informed with the latest updates from the government.</p>
+                    </div>
+                    <Link to="/policies">
+                        <Button variant="outline" className="text-sm">
+                            View All Policies
+                        </Button>
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {indianPolicies.slice(0, 3).map(policy => (
+                        <div key={policy.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 hover:shadow-md transition-all">
+                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-50 text-blue-700 mb-3">
+                                {policy.category}
+                            </span>
+                            <h3 className="font-bold text-gray-900 dark:text-white mb-2 line-clamp-1" title={policy.title}>
+                                {policy.title}
+                            </h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
+                                {policy.summary}
+                            </p>
+                            <div className="flex items-center justify-between text-xs text-gray-400">
+                                <span>{policy.source}</span>
+                                <span>{new Date(policy.publishedAt).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };
