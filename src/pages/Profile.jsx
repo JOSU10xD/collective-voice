@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import PetitionCard from '../components/petitions/PetitionCard';
@@ -10,6 +11,7 @@ import { NewspaperIcon } from '@heroicons/react/24/solid';
 
 const Profile = () => {
     const { userProfile, logout, currentUser } = useAuth();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('created');
     const [userPetitions, setUserPetitions] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -222,8 +224,13 @@ const Profile = () => {
                                     <NewspaperIcon className="h-8 w-8 text-gray-600" />
                                 </div>
                                 <h3 className="text-lg font-medium text-white mb-1">No starred policies</h3>
+<<<<<<< HEAD
                                 <p className="text-gray-400 mb-6">Follow policies to get updates on campus decisions.</p>
                                 <Button onClick={() => window.location.href = '/policies'} variant="outline" className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
+=======
+                                <p className="text-gray-400 mb-6">Follow policies to get updates on government decisions.</p>
+                                <Button onClick={() => navigate('/policies')} variant="outline" className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
+>>>>>>> b1f12c1560097d3464d89005a17f600cfac399b1
                                     Browse Policies
                                 </Button>
                             </div>
@@ -242,7 +249,7 @@ const Profile = () => {
                 ) : (
                     <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
                         <p className="text-gray-500">You haven't created any petitions yet.</p>
-                        <Button className="mt-4" onClick={() => window.location.href = '/create'}>Create one</Button>
+                        <Button className="mt-4" onClick={() => navigate('/create')}>Create one</Button>
                     </div>
                 )}
             </div>

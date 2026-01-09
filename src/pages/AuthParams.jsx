@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import toast from 'react-hot-toast';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 const AuthParams = ({ type }) => {
     const isLogin = type === 'login';
@@ -46,7 +47,13 @@ const AuthParams = ({ type }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+            <button
+                onClick={() => navigate('/')}
+                className="absolute top-8 left-8 p-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 group"
+            >
+                <ArrowLeftIcon className="h-6 w-6 group-hover:-translate-x-1 transition-transform" />
+            </button>
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center mb-6">
                     <img src="/src/assets/logocv.png" alt="CollectiveVoice Logo" className="h-20 w-auto drop-shadow-2xl hover:scale-105 transition-transform duration-300" />
@@ -57,12 +64,14 @@ const AuthParams = ({ type }) => {
                 <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
                     {isLogin ? 'Sign in to your account' : 'Create your account to start making a change'}
                 </p>
-                <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                    Or{' '}
-                    <Link to={isLogin ? "/register" : "/login"} className="font-medium text-primary-600 hover:text-primary-500 hover:underline transition-all">
-                        {isLogin ? "join the community" : "sign in instead"}
-                    </Link>
-                </p>
+                {!isLogin && (
+                    <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                        Or{' '}
+                        <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500 hover:underline transition-all">
+                            sign in instead
+                        </Link>
+                    </p>
+                )}
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -111,7 +120,7 @@ const AuthParams = ({ type }) => {
                         />
 
                         <Button type="submit" className="w-full" isLoading={loading}>
-                            {isLogin ? 'Sign in' : 'Sign up'}
+                            {isLogin ? 'Sign in' : 'Create Account'}
                         </Button>
                     </form>
 
