@@ -56,7 +56,7 @@ const Policies = () => {
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                     <NewspaperIcon className="h-8 w-8 text-cyan-400" />
-                    Government Policies
+                    Popular Policies
                 </h1>
             </div>
 

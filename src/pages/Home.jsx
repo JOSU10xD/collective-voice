@@ -8,6 +8,7 @@ import PolicyCard from '../components/policies/PolicyCard';
 import Button from '../components/ui/Button';
 import { Link } from 'react-router-dom';
 import { indianPolicies } from '../data/indianPolicies';
+import { viswajyothiPolicies } from '../data/viswajyothiPolicies';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -277,26 +278,48 @@ const Home = ({ filter }) => {
             </div>
 
 
-            {/* Recent Policies Section */}
-            <div className="mt-12 pt-8 border-t border-cyan-500/20">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 className="text-2xl font-bold text-white">Recent Government Policies</h2>
-                        <p className="text-gray-400 mt-1">Stay informed with the latest updates from the government.</p>
-                    </div>
-                    <Link to="/policies">
-                        <Button variant="outline" className="text-sm border-cyan-500/30 text-cyan-400 hover:border-cyan-400/60 hover:bg-cyan-500/10">
-                            View All Policies
-                        </Button>
-                    </Link>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {indianPolicies.slice(0, 3).map(policy => (
-                        <PolicyCard key={policy.id} policy={policy} />
-                    ))}
+
+            {/* Viswajyothi Policies Section */}
+            {filter !== 'mine' && (
+                <div className="mt-12 pt-8 border-t border-cyan-500/20">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 className="text-2xl font-bold text-white">Viswajyothi Policies</h2>
+                            <p className="text-gray-400 mt-1">Stay informed with the latest updates from the campus.</p>
+                        </div>
+                        <Link to="/policies">
+                            <Button variant="outline" className="text-sm border-cyan-500/30 text-cyan-400 hover:border-cyan-400/60 hover:bg-cyan-500/10">
+                                View All Policies
+                            </Button>
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {viswajyothiPolicies.slice(0, 3).map(policy => (
+                            <PolicyCard key={policy.id} policy={policy} />
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
+
+            {/* Recent Government Policies Section */}
+            {filter !== 'mine' && filter !== 'viswajyothi' && (
+                <div className="mt-12 pt-8 border-t border-cyan-500/20">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 className="text-2xl font-bold text-white">Recent Government Policies</h2>
+                            <p className="text-gray-400 mt-1">Stay informed with the latest updates from the government.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {indianPolicies.slice(0, 3).map(policy => (
+                            <PolicyCard key={policy.id} policy={policy} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </div >
     );
 };
