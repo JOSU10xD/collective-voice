@@ -6,7 +6,7 @@ import { db } from '../lib/firebase';
 import PetitionCard from '../components/petitions/PetitionCard';
 import AvatarUploader from '../components/AvatarUploader';
 import Button from '../components/ui/Button';
-import { viswajyothiPolicies } from '../data/viswajyothiPolicies';
+import { indianPolicies } from '../data/indianPolicies';
 import { NewspaperIcon } from '@heroicons/react/24/solid';
 
 const Profile = () => {
@@ -195,7 +195,7 @@ const Profile = () => {
                     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {userProfile.followedPolicies && userProfile.followedPolicies.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {viswajyothiPolicies
+                                {indianPolicies
                                     .filter(p => userProfile.followedPolicies.includes(p.id))
                                     .map(policy => (
                                         <div key={policy.id} className="card-glow rounded-2xl border border-cyan-500/20 hover:border-cyan-400/40 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 group bg-navy-900/40">
@@ -224,13 +224,8 @@ const Profile = () => {
                                     <NewspaperIcon className="h-8 w-8 text-gray-600" />
                                 </div>
                                 <h3 className="text-lg font-medium text-white mb-1">No starred policies</h3>
-<<<<<<< HEAD
-                                <p className="text-gray-400 mb-6">Follow policies to get updates on campus decisions.</p>
-                                <Button onClick={() => window.location.href = '/policies'} variant="outline" className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
-=======
                                 <p className="text-gray-400 mb-6">Follow policies to get updates on government decisions.</p>
-                                <Button onClick={() => navigate('/policies')} variant="outline" className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
->>>>>>> b1f12c1560097d3464d89005a17f600cfac399b1
+                                <Button onClick={() => navigate('/policies')} variant="outline" className="border-cyan-500/30 text-cyan-400 hover:border-cyan-400/60 hover:bg-cyan-500/10">
                                     Browse Policies
                                 </Button>
                             </div>
