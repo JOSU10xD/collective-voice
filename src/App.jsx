@@ -10,7 +10,9 @@ import PetitionDetail from './pages/PetitionDetail';
 import Notifications from './pages/Notifications';
 import Policies from './pages/Policies';
 import Profile from './pages/Profile';
+
 import AuthParams from './pages/AuthParams'; // Handles both Login/Register
+import NotFound from './pages/NotFound';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -49,6 +51,7 @@ function App() {
 
           <Route path="/login" element={<AuthParams type="login" />} />
           <Route path="/register" element={<AuthParams type="register" />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </Router>

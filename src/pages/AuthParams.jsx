@@ -5,6 +5,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import toast from 'react-hot-toast';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import logo from '../assets/logocv.png';
 
 const AuthParams = ({ type }) => {
     const isLogin = type === 'login';
@@ -56,7 +57,7 @@ const AuthParams = ({ type }) => {
             </button>
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center mb-6">
-                    <img src="/src/assets/logocv.png" alt="CollectiveVoice Logo" className="h-20 w-auto drop-shadow-2xl hover:scale-105 transition-transform duration-300" />
+                    <img src={logo} alt="CollectiveVoice Logo" className="h-20 w-auto drop-shadow-2xl hover:scale-105 transition-transform duration-300" />
                 </div>
                 <h2 className="text-center text-3xl font-black tracking-tight text-gray-900 dark:text-white">
                     {isLogin ? 'Welcome Back' : 'Join the Movement'}

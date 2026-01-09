@@ -233,19 +233,21 @@ const Profile = () => {
                     </div>
                 ) : (null)}
 
-                {loading ? (
-                    <div className="text-center py-10">Loading...</div>
-                ) : userPetitions.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {userPetitions.map(p => (
-                            <PetitionCard key={p.id} petition={p} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-                        <p className="text-gray-500">You haven't created any petitions yet.</p>
-                        <Button className="mt-4" onClick={() => navigate('/create')}>Create one</Button>
-                    </div>
+                {activeTab === 'created' && (
+                    loading ? (
+                        <div className="text-center py-10">Loading...</div>
+                    ) : userPetitions.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {userPetitions.map(p => (
+                                <PetitionCard key={p.id} petition={p} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+                            <p className="text-gray-500">You haven't created any petitions yet.</p>
+                            <Button className="mt-4" onClick={() => navigate('/create')}>Create one</Button>
+                        </div>
+                    )
                 )}
             </div>
         </div>
